@@ -25,30 +25,34 @@ class GameSquare {
 
     }
 
-    // Update square if not burnt
-    update(type, state) {
-        if (this.burnt) {
+    // Increase state if not burnt or unoccupied
+    incrementState() {
+        if (this.burnt || !this.occupied) {
             return;
         }
 
-        if (type == "") {
-            this.reset();
-            return;
-        }
+        this.state++;
 
-        if (state == 3) {
+        if (this.state >= 3) {
             burnt = true;
+            this.state = 3;
         }
-
-        this.type = type;
-        this.state = state;
-        this.occupied = true;
 
         this._setImg();
     }
 
+    // Update type if not burnt or occupied
+    updateType(type) {
+        if (this.occupied || this.burnt) {
+            return;
+        }
 
+        this.occupied = true;
+        this.state = 0;
+        this.type = type;
 
+        this._setImg();
+    }
 
 }
 
