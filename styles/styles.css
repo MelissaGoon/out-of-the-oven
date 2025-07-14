@@ -9,6 +9,18 @@
 /* # Tutorial # */
 
 /* # Game Screen # */
+.game-board {
+    display: grid;
+    width: 90%;
+    gap: 3%;
+    aspect-ratio: 1 / 1;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.square {
+    background-color: antiquewhite;
+}
 
 /* # End Screen # */
 

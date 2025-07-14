@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Out of the Oven</title>
+
+    <link rel="stylesheet" href="styles/normalize-fwd.css">
+    <link rel="stylesheet" href="styles/styles.css">
 </head>
 
 <body>
@@ -34,13 +37,48 @@
                 <span class="strikes-output" id="strikes-output">0</span>
                 <!-- TODO: maybe replace with images? -->
             </div>
-            <div class="game-board" id="game-board">
-                <div class="box" id="box-1">
 
+            <div class="game-board" id="game-board">
+
+                <div class="square" id="square-1">
+                    <img src="" alt="">
                 </div>
+                <div class="square" id="square-2">
+                    <img src="" alt="">
+                </div>
+                <div class="square" id="square-3">
+                    <img src="" alt="">
+                </div>
+                <div class="square" id="square-4">
+                    <img src="" alt="">
+                </div>
+                <div class="square" id="square-5">
+                    <img src="" alt="">
+                </div>
+                <div class="square" id="square-6">
+                    <img src="" alt="">
+                </div>
+                <div class="square" id="square-7">
+                    <img src="" alt="">
+                </div>
+                <div class="square" id="square-8">
+                    <img src="" alt="">
+                </div>
+                <div class="square" id="square-9">
+                    <img src="" alt="">
+                </div>
+
             </div>
+
+            <div class="time">
+                <span class="time-output" id="time-output"> 0:00 </span>
+            </div>
+
+            <button class="pause-button" id="pause-button">▐▐</button>
         </div>
 
+        <!-- Pause Pop Up -->
+        <div class="pause-popup" id="pause-popup"></div>
 
         <!-- Game Over Screen -->
         <div class="game-over" id="game-over">
