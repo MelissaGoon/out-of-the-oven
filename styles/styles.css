@@ -1,6 +1,8 @@
 /* ## Base ## */
 /* Variables */
-:root {}
+:root {
+    --grey: #909090;
+}
 
 /* Text */
 body {
@@ -36,8 +38,29 @@ h6 {
 }
 
 .square {
-    background-color: antiquewhite;
+  background-size: contain;
+  background-repeat: no-repeat;
+  aspect-ratio: 1 / 1;
 }
+
+.square img {
+    display: block;
+    object-position: center;
+    object-fit: scale-down;
+}
+
+#square-2, #square-5, #square-0 {
+    background-image: url("../assets/tile-1.png");
+}
+
+#square-1, #square-3, #square-7 {
+    background-image: url("../assets/tile-2.png");
+}
+
+#square-4, #square-6, #square-8 {
+    background-image: url("../assets/tile-3.png");
+}
+
 
 /* # End Screen # */
 
