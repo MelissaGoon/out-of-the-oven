@@ -1,7 +1,7 @@
 
 function generateBreads(name, interval) {
     return {
-        interval: interval,
+        interval_length: interval,
         0: { src: `assets/${name}-0.png`, alt: `A raw ${name}` },
         1: { src: `assets/${name}-1.png`, alt: `An undercooked ${name}` },
         2: { src: `assets/${name}-2.png`, alt: `A baked ${name}` },
@@ -15,6 +15,8 @@ const breads = {
     danish: generateBreads("danish", 2000)
 };
 
+const bread_names = ["bread", "croissant", "danish"];
+
 
 class GameSquare {
     constructor(elem) {
@@ -27,14 +29,13 @@ class GameSquare {
     }
 
     _setImg() {
-        const img = new Image();
+        const imgCollection = this.elem.getElementsByTagName('img');
+        const img = imgCollection[0];
 
-        if (type != null) {
+        if (this.type != null) {
             img.src = breads[this.type][this.state].src;
             img.alt = breads[this.type][this.state].alt;
         }
-
-        this.elem.innerHTML = img;
     }
 
     reset() {
@@ -43,8 +44,12 @@ class GameSquare {
         this.state = 0;
         this.type = "";
         this._setImg();
-        clearInterval(this.interval);
-        this.interval = null;
+
+        if (this.interval != null) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
+
 
     }
 
@@ -56,7 +61,7 @@ class GameSquare {
         this.state++;
 
         if (this.state >= 3) {
-            burnt = true;
+            this.burnt = true;
             this.state = 3;
             this._notifyBurnt();
         }
@@ -65,10 +70,14 @@ class GameSquare {
     }
 
     _notifyBurnt() {
+        clearInterval(this.interval);
+        this.interval = null;
+
         const event = new Event("burnt");
         this.elem.dispatchEvent(event);
     }
 
+    // Setters
     addItem(type) {
         if (this.occupied || this.burnt) {
             return;
@@ -79,7 +88,7 @@ class GameSquare {
         this.type = type;
 
         this._setImg();
-        this.interval = setInterval(function () { this._incrementState(); }, breads[this.type].interval);
+        this.interval = setInterval(() => this._incrementState(), breads[this.type].interval_length);
     }
 
     // Getters
@@ -99,32 +108,40 @@ class GameSquare {
 }
 
 
-
-
 class Game {
     constructor(devMode = false, cheatMode = false) {
+        this.elems = {}
         this._setUpElems();
         this._setUpEvents();
 
-        this.occupiedSquares = new Set();
+
         this.gameSquares = {};
         this.elems.squareElems.forEach(elem => this.gameSquares[elem.id] = new GameSquare(elem));
+        this.occupiedSquaresSet = new Set();
+        this.allSquaresSet = new Set();
+        this.elems.squareElems.forEach(elem => this.allSquaresSet.add(elem.id));
 
         this.coins = 5;
         this.strikes = 0;
         this.failStrikes = Math.ceil(Object.keys(this.gameSquares).length / 2);
+        this.elems.strikesMax.innerHTML = this.failStrikes;
+
+
+        this._placeBreads();
     }
 
+
     _setUpElems() {
-        this.elems = {}
+
         this.elems.squareElems = Array.from(document.querySelectorAll(".square"));
+        this.elems.strikesOut = document.getElementById("strikes-output");
+        this.elems.strikesMax = document.getElementById("strikes-max");
 
     }
 
     _setUpEvents() {
         this.elems.squareElems.forEach(elem => elem.addEventListener('click', e => this._handleSquareClick(e)));
         this.elems.squareElems.forEach(elem => elem.addEventListener('burnt', e => this._handleBurnt()));
-
     }
 
     _handleSquareClick(e) {
@@ -132,42 +149,58 @@ class Game {
         console.log(id);
 
         const square = this.gameSquares[id];
+        console.log(square)
 
         if (!square.isOccupied() || square.isBurnt()) {
             return;
         }
         // get the info from the square
+
         // Update score
+        // display score
         // reset square
 
     }
 
     _handleBurnt() {
+        console.log("Burnt!");
         this.strikes++;
 
         if (this.strikes >= this.failStrikes) {
             this._gameOver();
         }
 
+        this.elems.strikesOut.innerHTML = this.strikes;
+
     }
 
+    // At a random interval between min and max times, add a bread to a random square
     _placeBreads(min_time = 1000, max_time = 4000) {
-        if (this.occupiedSquares.size == Object.keys(this.gameSquares).length) {
+        const randTime = Math.floor(Math.random() * (max_time - min_time + 1) + min_time);
+        this.timeout = setTimeout(() => this._placeBreads(min_time, max_time), randTime);
+
+        if (this.occupiedSquaresSet.size == Object.keys(this.gameSquares).length) {
             return;
         }
-        // At a random interval between min and max times, add a bread to a random square
-        // Update occupied
 
+        const randSquare = this._randomSquare();
+        const randItem = bread_names[Math.floor(Math.random() * bread_names.length)];
+
+        this.gameSquares[randSquare].addItem(randItem);
+        this.occupiedSquaresSet.add(randSquare);
 
     }
 
+    // Picks a random unoccupied square
     _randomSquare() {
-        // Pick a random unoccupied square
+        const unoccupiedArr = Array.from(this.allSquaresSet.difference(this.occupiedSquaresSet));
+        return unoccupiedArr[Math.floor(Math.random() * unoccupiedArr.length)];
 
     }
 
     _gameOver() {
         console.log("Game over!");
+        clearTimeout(this.timeout);
     }
 
     _reset() {
