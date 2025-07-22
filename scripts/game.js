@@ -1,22 +1,19 @@
 
-function generateBreads(name, interval) {
+function generateBreads(name, interval, raw_val, under_val, baked_val) {
     return {
         interval_length: interval,
-        0: { src: `assets/${name}-0.png`, alt: `A raw ${name}` },
-        1: { src: `assets/${name}-1.png`, alt: `An undercooked ${name}` },
-        2: { src: `assets/${name}-2.png`, alt: `A baked ${name}` },
+        0: { src: `assets/${name}-0.png`, alt: `A raw ${name}`, value: raw_val },
+        1: { src: `assets/${name}-1.png`, alt: `An undercooked ${name}`, value: under_val },
+        2: { src: `assets/${name}-2.png`, alt: `A baked ${name}`, value: baked_val },
         3: { src: `assets/${name}-3.png`, alt: `A burnt ${name}` },
     };
 }
 
 const breads = {
-    bread: generateBreads("bread", 3000),
-    croissant: generateBreads("croissant", 1000),
-    danish: generateBreads("danish", 2000)
+    bread: generateBreads("bread", 3000, -2, 0, 3),
+    croissant: generateBreads("croissant", 1000, -4, 1, 5),
+    danish: generateBreads("danish", 2000, -3, 0, 4)
 };
-
-const bread_names = ["bread", "croissant", "danish"];
-
 
 class GameSquare {
     constructor(elem) {
@@ -32,25 +29,13 @@ class GameSquare {
         const imgCollection = this.elem.getElementsByTagName('img');
         const img = imgCollection[0];
 
-        if (this.type != null) {
+        if (this.type != "") {
             img.src = breads[this.type][this.state].src;
             img.alt = breads[this.type][this.state].alt;
+        } else {
+            img.src = "";
+            img.alt = "";
         }
-    }
-
-    reset() {
-        this.occupied = false;
-        this.burnt = false;
-        this.state = 0;
-        this.type = "";
-        this._setImg();
-
-        if (this.interval != null) {
-            clearInterval(this.interval);
-            this.interval = null;
-        }
-
-
     }
 
     _incrementState() {
@@ -70,9 +55,7 @@ class GameSquare {
     }
 
     _notifyBurnt() {
-        clearInterval(this.interval);
-        this.interval = null;
-
+        this.stop();
         const event = new Event("burnt");
         this.elem.dispatchEvent(event);
     }
@@ -91,6 +74,25 @@ class GameSquare {
         this.interval = setInterval(() => this._incrementState(), breads[this.type].interval_length);
     }
 
+    reset() {
+        this.occupied = false;
+        this.burnt = false;
+        this.state = 0;
+        this.type = "";
+        this._setImg();
+
+        this.stop()
+
+    }
+
+    stop() {
+        if (this.interval != null) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
+    }
+
+
     // Getters
     isOccupied() {
         return this.occupied;
@@ -102,6 +104,10 @@ class GameSquare {
 
     getState() {
         return this.state;
+    }
+
+    getType() {
+        return this.type;
     }
 
 
@@ -136,6 +142,7 @@ class Game {
         this.elems.squareElems = Array.from(document.querySelectorAll(".square"));
         this.elems.strikesOut = document.getElementById("strikes-output");
         this.elems.strikesMax = document.getElementById("strikes-max");
+        this.elems.coinsOut = document.getElementById("coin-output");
 
     }
 
@@ -146,28 +153,34 @@ class Game {
 
     _handleSquareClick(e) {
         const id = e.target.closest(".square").id;
-        console.log(id);
-
         const square = this.gameSquares[id];
-        console.log(square)
 
         if (!square.isOccupied() || square.isBurnt()) {
             return;
         }
-        // get the info from the square
 
-        // Update score
-        // display score
-        // reset square
+        const state = square.getState();
+        const type = square.getType();
+
+        this.coins += breads[type][state].value;
+        this.occupiedSquaresSet.delete(id);
+        square.reset();
+
+        if (this.coins < 0) {
+            this._gameOver("bankrupt");
+            this.elems.coinsOut.innerHTML = 0;
+            return;
+        }
+
+        this.elems.coinsOut.innerHTML = this.coins;
 
     }
 
     _handleBurnt() {
-        console.log("Burnt!");
         this.strikes++;
 
         if (this.strikes >= this.failStrikes) {
-            this._gameOver();
+            this._gameOver("fired");
         }
 
         this.elems.strikesOut.innerHTML = this.strikes;
@@ -183,6 +196,7 @@ class Game {
             return;
         }
 
+        const bread_names = Object.keys(breads);
         const randSquare = this._randomSquare();
         const randItem = bread_names[Math.floor(Math.random() * bread_names.length)];
 
@@ -198,9 +212,15 @@ class Game {
 
     }
 
-    _gameOver() {
-        console.log("Game over!");
+    _gameOver(type) {
+        console.log("Game over!", type);
+
+        for (let square in this.gameSquares) {
+            this.gameSquares[square].stop();
+        }
         clearTimeout(this.timeout);
+
+        // TODO: Freeze interactions do game over screen.
     }
 
     _reset() {
