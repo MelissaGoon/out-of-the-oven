@@ -1,12 +1,18 @@
 /* ## Base ## */
 /* Variables */
 :root {
-    --grey: #909090;
+    --cream: #feeccf;
+    --dark-brown: #220A00;
+    --brown: #683319;
+    --green: #A5A250;
+    --dark-cream: #d6be97;
+
 }
 
 /* Text */
 body {
     font-family: "Gaegu", sans-serif;
+    background-color: var(--cream);
 }
 
 h1,
@@ -16,31 +22,154 @@ h4,
 h5,
 h6 {
     font-family: "Gluten", cursive;
+    color: var(--dark-brown);
 }
 
+h1 {
+    font-size: 3.5rem;
+}
 
 /* Buttons */
+button {
+    font-size: 2rem;
+    padding: 0.5rem 1rem;
+    margin: 1rem;
+    border-radius: 20%;
+    background-color: var(--brown);
+    color: var(--cream);
+    box-shadow: 0;
 
+    border-image-source: url(../assets/button-img.png);
+    border-image-slice: 150;
+    border-image-width: 7;
+    border-image-outset: 4;
+    border-image-repeat: round;
+
+    max-width: fit-content;
+
+
+}
+
+button:focus,
+button:active {
+    filter: drop-shadow(0px 5px 0px var(--dark-brown))
+}
 
 /* ## Main ## */
 /* # Start Screen # */
+#start-screen {
+    background-color: var(--cream);
+    text-align: center;
+    height: 100vh;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: left 1.5s;
+    z-index: 1;
+
+}
+
+#start-screen::before {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    pointer-events: none;
+
+    border: 2rem solid transparent;
+    border-image-source: url(../assets/border-filled-3.png);
+    border-image-slice: 90;
+    border-image-repeat: round;
+
+    filter: drop-shadow(0px 0px 3px var(--dark-brown));
+}
+
+#start-screen.hidden {
+    left: -100%;
+}
+
+#start-screen.hidden::before {
+    filter: none;
+}
+
+#content {
+    margin: auto 0;
+    padding: 1rem;
+    background-image: url(../assets/bg-image.svg);
+    background-size: contain;
+    background-repeat: repeat-x;
+}
+
+.logo-img {
+    width: 80%;
+    max-width: 20rem;
+    margin-top: 10%;
+    filter: drop-shadow(0px 5px 1px var(--brown));
+}
+
+@media (min-width: 40em) {}
 
 /* # Tutorial # */
 
 /* # Game Screen # */
+#game-screen {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    align-items: center;
+}
+
+#game-screen h2 {
+    border: .8rem solid transparent;
+    background-color: var(--brown);
+    color: var(--cream);
+    border-image-source: url(../assets/name-bg.svg);
+    border-image-slice: 20% 10%;
+    border-image-repeat: round;
+    border-image-outset: .5;
+    filter: drop-shadow(0px 5px 1px var(--dark-cream));
+}
+
 .game-board {
     display: grid;
-    width: 90%;
+    width: 100%;
     gap: 3%;
     aspect-ratio: 1 / 1;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
+
+    border-radius: 10px;
+    margin: 0;
+
+    border: 1rem solid transparent;
+    border-image-source: url(../assets/border-light.png);
+    border-image-slice: 90;
+    border-image-repeat: round;
+}
+
+.score-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+}
+
+.score {
+    border-radius: 20px;
+    padding: .4rem;
+    background-color: var(--dark-cream);
 }
 
 .square {
-  background-size: contain;
-  background-repeat: no-repeat;
-  aspect-ratio: 1 / 1;
+    background-size: contain;
+    background-repeat: no-repeat;
+    aspect-ratio: 1 / 1;
 }
 
 .square img {
@@ -49,18 +178,46 @@ h6 {
     object-fit: scale-down;
 }
 
-#square-2, #square-5, #square-0 {
+#square-2,
+#square-5,
+#square-0 {
     background-image: url("../assets/tile-1.png");
 }
 
-#square-1, #square-3, #square-7 {
+#square-1,
+#square-3,
+#square-7 {
     background-image: url("../assets/tile-2.png");
 }
 
-#square-4, #square-6, #square-8 {
+#square-4,
+#square-6,
+#square-8 {
     background-image: url("../assets/tile-3.png");
 }
 
+.bounce {
+    animation: bounce .5s ease;
+}
+
+@keyframes bounce {
+    70% {
+        transform: translateY(0%);
+    }
+
+    80% {
+        transform: translateY(-15%);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+
+#reset-btn {
+    font-size: 1rem;
+}
 
 /* # End Screen # */
 

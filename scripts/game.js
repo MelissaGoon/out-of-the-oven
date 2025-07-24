@@ -1,4 +1,5 @@
 
+// Generate a bread object
 function generateBreads(name, interval, raw_val, under_val, baked_val) {
     return {
         interval_length: interval,
@@ -25,6 +26,7 @@ class GameSquare {
         this.interval = null;
     }
 
+    // Set image for square
     _setImg() {
         const imgCollection = this.elem.getElementsByTagName('img');
         const img = imgCollection[0];
@@ -38,12 +40,20 @@ class GameSquare {
         }
     }
 
+    // Progress the bread (if present and not burnt) to the next state.
     _incrementState() {
         if (this.burnt || !this.occupied) {
             return;
         }
 
         this.state++;
+
+        if (this.state == 2) {
+            const imgCollection = this.elem.getElementsByTagName('img');
+            const img = imgCollection[0];
+
+            img.classList.add("bounce");
+        }
 
         if (this.state >= 3) {
             this.burnt = true;
@@ -54,6 +64,7 @@ class GameSquare {
         this._setImg();
     }
 
+    // Dispatch burnt event, listened for by the game class.
     _notifyBurnt() {
         this.stop();
         const event = new Event("burnt");
@@ -61,6 +72,7 @@ class GameSquare {
     }
 
     // Setters
+    // Add a bread to the square
     addItem(type) {
         if (this.occupied || this.burnt) {
             return;
@@ -71,9 +83,12 @@ class GameSquare {
         this.type = type;
 
         this._setImg();
+
+        // Set interval for bread to increase in state
         this.interval = setInterval(() => this._incrementState(), breads[this.type].interval_length);
     }
 
+    // Reset the square to the empty state
     reset() {
         this.occupied = false;
         this.burnt = false;
@@ -85,6 +100,7 @@ class GameSquare {
 
     }
 
+    // Stop bread state advancing
     stop() {
         if (this.interval != null) {
             clearInterval(this.interval);
@@ -132,13 +148,15 @@ class Game {
         this.failStrikes = Math.ceil(Object.keys(this.gameSquares).length / 2);
         this.elems.strikesMax.innerHTML = this.failStrikes;
 
+        // TODO: game screen and tutorial
 
-        this._placeBreads();
+
     }
 
-
     _setUpElems() {
-
+        this.elems.startScreen = document.getElementById("start-screen");
+        this.elems.startBtn = document.getElementById("start-btn");
+        this.elems.gameScreen = document.getElementById("game-screen");
         this.elems.squareElems = Array.from(document.querySelectorAll(".square"));
         this.elems.strikesOut = document.getElementById("strikes-output");
         this.elems.strikesMax = document.getElementById("strikes-max");
@@ -147,8 +165,11 @@ class Game {
     }
 
     _setUpEvents() {
+        this.elems.startScreen.addEventListener('transitionend', () => { this._placeBreads(); }, { once: true });
+        this.elems.startBtn.addEventListener('click', () => { this.elems.startScreen.classList.add("hidden"); });
         this.elems.squareElems.forEach(elem => elem.addEventListener('click', e => this._handleSquareClick(e)));
         this.elems.squareElems.forEach(elem => elem.addEventListener('burnt', e => this._handleBurnt()));
+
     }
 
     _handleSquareClick(e) {

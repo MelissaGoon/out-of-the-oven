@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gluten:wght@100..900&display=swap"
         rel="stylesheet">
+
     <link rel="stylesheet" href="styles/normalize-fwd.css">
     <link rel="stylesheet" href="styles/styles.css">
 </head>
@@ -17,8 +18,18 @@
 <body>
 
     <main>
+
         <!-- Start Screen -->
         <div class="start-screen" id="start-screen">
+            <section id="content">
+                <h1 class="screen-reader-text">Out of the Oven</h1>
+                <img class="logo-img" src="assets/logo.png"
+                    alt="Logo with the words 'Out of the Oven' with a bread braid around the edges and some baked goods on the bottom;">
+                <div class="button-container">
+                    <button id="start-btn">Start</button>
+                    <button id="tutorial-btn">Tutorial</button>
+                </div>
+            </section>
 
         </div>
 
@@ -27,21 +38,24 @@
 
         <!-- Game screen -->
         <div class="game-screen" id="game-screen">
-            <h1>Out of the Oven</h1>
+            <h2>Out of the Oven</h2>
 
-            <div class="coins">
-                <span> Coins: </span>
-                <!-- TODO: replace with coin icon-->
+            <div class="score-container">
+                <div class="score coins">
+                    <strong>Coins:</strong>
+                    <!-- TODO: replace with coin icon-->
 
-                <span class="coin-output" id="coin-output">5</span>
+                    <span class="coin-output" id="coin-output">5</span>
+                </div>
+
+                <div class="score strikes">
+                    <strong> Strikes: </strong>
+                    <span class="strikes-output" id="strikes-output">0</span>/
+                    <span id="strikes-max"> 5</span>
+
+                </div>
             </div>
 
-            <div class="coins">
-                <span> Strikes: </span>
-                <span class="strikes-output" id="strikes-output">0</span>/
-                <span id="strikes-max"> 5</span>
-
-            </div>
 
             <div class="game-board" id="game-board">
                 <div class="square" id="square-0">
@@ -75,9 +89,10 @@
 
             </div>
 
-            <div class="time">
+            <!-- TODO: time? -->
+            <!-- <div class="time">
                 <span class="time-output" id="time-output"> 0:00 </span>
-            </div>
+            </div> -->
 
             <button id="reset-btn"> Reset </button>
 
