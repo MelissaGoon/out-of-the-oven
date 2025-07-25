@@ -48,6 +48,7 @@ class GameSquare {
 
         this.state++;
 
+        // Trigger bounce animation when baked
         if (this.state == 2) {
             const imgCollection = this.elem.getElementsByTagName('img');
             const img = imgCollection[0];
@@ -55,6 +56,7 @@ class GameSquare {
             img.classList.add("bounce");
         }
 
+        // Handle burnt
         if (this.state >= 3) {
             this.burnt = true;
             this.state = 3;
@@ -64,7 +66,7 @@ class GameSquare {
         this._setImg();
     }
 
-    // Dispatch burnt event, listened for by the game class.
+    // Dispatch burnt event, listened for by the game class and stop interval
     _notifyBurnt() {
         this.stop();
         const event = new Event("burnt");
@@ -136,15 +138,20 @@ class Game {
         this._setUpElems();
         this._setUpEvents();
 
-
+        // Set up object where key is id of element and value is the associated GameSquare object
         this.gameSquares = {};
         this.elems.squareElems.forEach(elem => this.gameSquares[elem.id] = new GameSquare(elem));
+
         this.occupiedSquaresSet = new Set();
+
+        // Set up set of game square ids
         this.allSquaresSet = new Set();
         this.elems.squareElems.forEach(elem => this.allSquaresSet.add(elem.id));
 
+
         this.coins = 5;
         this.strikes = 0;
+        // Calculate number of burnt breads for game over
         this.failStrikes = Math.ceil(Object.keys(this.gameSquares).length / 2);
         this.elems.strikesMax.innerHTML = this.failStrikes;
 
@@ -166,13 +173,15 @@ class Game {
 
     _setUpEvents() {
         this.elems.startScreen.addEventListener('transitionend', () => { this._placeBreads(); }, { once: true });
-        this.elems.startBtn.addEventListener('click', () => { this.elems.startScreen.classList.add("hidden"); });
+        this.elems.startBtn.addEventListener('click', () => { this.elems.startScreen.classList.toggle("hidden"); });
         this.elems.squareElems.forEach(elem => elem.addEventListener('click', e => this._handleSquareClick(e)));
         this.elems.squareElems.forEach(elem => elem.addEventListener('burnt', e => this._handleBurnt()));
 
     }
 
+    // Handle what happens when a square is clicked
     _handleSquareClick(e) {
+        // Get the square that was clicked
         const id = e.target.closest(".square").id;
         const square = this.gameSquares[id];
 
@@ -183,6 +192,7 @@ class Game {
         const state = square.getState();
         const type = square.getType();
 
+        // Use breads object to find the value of the bread clicked
         this.coins += breads[type][state].value;
         this.occupiedSquaresSet.delete(id);
         square.reset();
@@ -197,6 +207,7 @@ class Game {
 
     }
 
+    // Handle when the burnt event occurs on a game square
     _handleBurnt() {
         this.strikes++;
 
@@ -211,6 +222,7 @@ class Game {
     // At a random interval between min and max times, add a bread to a random square
     _placeBreads(min_time = 1000, max_time = 4000) {
         const randTime = Math.floor(Math.random() * (max_time - min_time + 1) + min_time);
+        // TODO: Decrease interval as time goes on? (handle 0 case)
         this.timeout = setTimeout(() => this._placeBreads(min_time, max_time), randTime);
 
         if (this.occupiedSquaresSet.size == Object.keys(this.gameSquares).length) {

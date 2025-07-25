@@ -29,12 +29,48 @@
                     <button id="start-btn">Start</button>
                     <button id="tutorial-btn">Tutorial</button>
                 </div>
+
+                <p>&copy; Melissa Goon 2025</p>
             </section>
 
         </div>
 
         <!-- Tutorial Popup -->
-        <div class="tutorial-popup" id="tutorial-popup"></div>
+        <div class="tutorial-popup hidden" id="tutorial-popup">
+            <section id="tutorial-content" class="tutorial-content">
+                <button id="close-btn" class="close-btn">
+
+                    <svg class="close-icon" width="110" height="110" viewBox="0 0 110 110" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <title>Close The Tutorial</title>
+                        <path class="fill-path "
+                            d="M80 85H75V80H70V75H65V70H60V65H50V70H45V75H40V80H35V85H30V80H25V75H30V70H35V65H40V60H45V50H40V45H35V40H30V35H25V30H30V25H35V30H40V35H45V40H50V45H60V40H65V35H70V30H75V25H80V30H85V35H80V40H75V45H70V50H65V60H70V65H75V70H80V75H85V80H80V85Z"
+                            fill="#FEECCF" />
+                        <path class="outline-path"
+                            d="M75 85H80V80H85V75H80V70H75V65H70V60H65V50H70V45H75V40H80V35H85V30H80V25H75V30H70V35H65V40H60V45H50V40H45V35H40V30H35V25H30V30H25V35H30V40H35V45H40V50H45V60H40V65H35V70H30V75H25V80H30V85H35V80H40V75H45V70H50V65H60V70H65V75H70V80H75M85 95H70V90H65V85H60V80H50V85H45V90H40V95H25V90H20V85H15V70H20V65H25V60H30V50H25V45H20V40H15V25H20V20H25V15H40V20H45V25H50V30H60V25H65V20H70V15H85V20H90V25H95V40H90V45H85V50H80V60H85V65H90V70H95V85H90V90H85V95Z"
+                            fill="#683319" />
+                    </svg>
+
+
+                </button>
+
+
+                <h2>Tutorial</h2>
+                <p>Click on the breads when they're fully baked to gain coins!</p>
+                <img src="assets/baked-img.png" alt="Image of baked breads">
+                <p>But underbaked breads aren't worth much :&#40;</p>
+                <img src="assets/under-img.png" alt="Image of underbaked breads">
+                <p>Careful, if they're raw you'll lose coins...</p>
+                <img src="assets/raw-img.png" alt="Image of raw breads">
+                <p>If you let them burn, they'll get stuck and you'll get a strike!</p>
+                <img src="assets/burnt-img.png" alt="Image of burnt breads">
+
+                <button>Lets Play!</button>
+            </section>
+
+
+
+        </div>
 
         <!-- Game screen -->
         <div class="game-screen" id="game-screen">
@@ -98,14 +134,13 @@
 
         </div>
 
-        <!-- Pause Pop Up -->
-        <div class="pause-popup" id="pause-popup"></div>
-
         <!-- Game Over Screen -->
         <div class="game-over" id="game-over">
 
         </div>
     </main>
+
+
 
     <script src="scripts/game.js"></script>
 </body>
