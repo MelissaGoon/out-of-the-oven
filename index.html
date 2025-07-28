@@ -36,8 +36,8 @@
         </div>
 
         <!-- Tutorial Popup -->
-        <div class="tutorial-popup hidden" id="tutorial-popup">
-            <section id="tutorial-content" class="tutorial-content">
+        <div class="popup-bg hidden" id="tutorial-popup">
+            <section id="tutorial-content" class="popup-content">
                 <button id="close-btn" class="close-btn">
 
                     <svg class="close-icon" width="110" height="110" viewBox="0 0 110 110" fill="none"
@@ -65,7 +65,7 @@
                 <p>If you let them burn, they'll get stuck and you'll get a strike!</p>
                 <img src="assets/burnt-img.png" alt="Image of burnt breads">
 
-                <button>Lets Play!</button>
+                <button id="tut-start-btn">Lets Play!</button>
             </section>
 
 
@@ -78,8 +78,8 @@
 
             <div class="score-container">
                 <div class="score coins">
-                    <strong>Coins:</strong>
-                    <!-- TODO: replace with coin icon-->
+                    <img class="coin-img" src="assets/coin.png" alt="A coin">
+
 
                     <span class="coin-output" id="coin-output">5</span>
                 </div>
@@ -130,12 +130,38 @@
                 <span class="time-output" id="time-output"> 0:00 </span>
             </div> -->
 
-            <button id="reset-btn"> Reset </button>
+            <div class="bottom-btns">
+                <button id="reset-btn"> Reset </button>
+                <button id="quit-btn-game"> Quit </button>
+            </div>
+
 
         </div>
 
-        <!-- Game Over Screen -->
-        <div class="game-over" id="game-over">
+        <!-- Game Over Popup -->
+        <div class="popup-bg hidden" id="game-over-popup">
+            <section class="popup-content" id="game-over-content">
+                <h2>Game Over</h2>
+                <section>
+                    <h3><strong>Final Score:</strong></h3>
+
+                    <div>
+                        <strong>Coins:</strong>
+                        <img class="coin-img" src="assets/coin.png" alt="A coin">
+                        <span id="final-score-out">0</span>
+                    </div>
+
+                    <div>
+                        <strong>Strikes:</strong>
+                        <span id="final-strikes-out">0</span>/
+                        <span id="final-strikes-max"> 5</span>
+                    </div>
+                </section>
+
+                <button id="play-again-btn">Play Again</button>
+                <button id="quit-btn-end">Exit</button>
+            </section>
+
 
         </div>
     </main>

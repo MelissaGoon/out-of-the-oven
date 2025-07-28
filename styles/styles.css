@@ -1,6 +1,7 @@
 /* ## Base ## */
 /* Variables */
 :root {
+    --white: #FFFCF7;
     --cream: #feeccf;
     --dark-brown: #220A00;
     --brown: #683319;
@@ -32,7 +33,7 @@ h1 {
 
 /* Buttons */
 button {
-    font-size: 2rem;
+    font-size: var(--mobile-font-clamp);
     padding: 0.5rem 1rem;
     margin: 1rem;
     border-radius: 20%;
@@ -67,7 +68,7 @@ button:active {
     left: 0;
     top: 0;
     transition: left 1.5s;
-    z-index: 1;
+    z-index: 2;
 
 }
 
@@ -105,6 +106,10 @@ button:active {
     background-repeat: repeat-x;
 }
 
+#content button {
+    font-size: 2rem;
+}
+
 .logo-img {
     width: 80%;
     max-width: 20rem;
@@ -117,11 +122,11 @@ button:active {
 
 /* # Tutorial # */
 
-#tutorial-popup {
+.popup-bg {
     position: absolute;
     left: 0;
     top: 0;
-    z-index: 2;
+    z-index: 3;
     padding: 1rem;
     background-color: rgba(34, 10, 0, 0.3);
     backdrop-filter: blur(2px);
@@ -130,21 +135,22 @@ button:active {
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
-#tutorial-popup.hidden {
+.popup-bg.hidden {
     display: none;
     backdrop-filter: none;
 }
 
-#tutorial-content {
+.popup-content {
     background-color: var(--cream);
     text-align: center;
     position: relative;
 
     border: 1rem solid transparent;
 
-    border-image-source: url(../assets/tutorial-bg.svg);
+    border-image-source: url(../assets/popup-body.svg);
     border-image-slice: 20% 10%;
     border-image-repeat: round;
     border-image-outset: .5;
@@ -155,22 +161,18 @@ button:active {
 
 }
 
-#tutorial-content h2 {
+.popup-content h2 {
     margin: 0;
     margin-top: 1rem;
     font-size: var(--mobile-font-clamp);
 }
 
-#tutorial-content p {
+.popup-content p {
     margin: 0;
 }
 
 #tutorial-content img {
     max-width: 50%;
-}
-
-#tutorial-content button {
-    font-size: var(--mobile-font-clamp);
 }
 
 #close-btn {
@@ -193,7 +195,7 @@ button:active {
 
 #close-btn:focus .fill-path,
 #close-btn:active .fill-path {
-    fill: #A5A250;
+    fill: var(--green);
 }
 
 
@@ -211,6 +213,9 @@ button:active {
     padding: 1rem;
     align-items: center;
     height: 100%;
+    background-image: url(../assets/bg-image.svg);
+    background-size: 50%;
+    background-repeat: repeat-x;
 
 }
 
@@ -222,7 +227,7 @@ button:active {
     border-image-slice: 20% 10%;
     border-image-repeat: round;
     border-image-outset: .5;
-    filter: drop-shadow(0px 5px 1px var(--dark-cream));
+    filter: drop-shadow(0px 5px 2px var(--dark-brown));
 }
 
 .game-board {
@@ -233,10 +238,11 @@ button:active {
     aspect-ratio: 1 / 1;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    margin: 0;
-
+    margin: 1rem;
+    background-color: var(--cream);
     border: 1rem solid transparent;
-    border-image-source: url(../assets/border-light.png);
+    border-image-source: url(../assets/game-board-bg.png);
+    border-image-outset: .5;
     border-image-slice: 90;
     border-image-repeat: round;
 }
@@ -244,22 +250,55 @@ button:active {
 .score-container {
     display: flex;
     justify-content: space-between;
-    width: 100%;
-    padding: 1rem;
     font-size: var(--mobile-font-clamp);
+    width: 90%;
+    max-width: 400px;
+}
+
+.coin-img {
+    max-height: var(--mobile-font-clamp);
 }
 
 .score {
-    border-radius: 1.25rem;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    border-radius: 100px;
     padding: .4rem;
     background-color: var(--dark-cream);
+    border: 3px solid var(--white)
 }
 
 .square {
     background-size: contain;
     background-repeat: no-repeat;
     aspect-ratio: 1 / 1;
+    position: relative;
 }
+
+.square:hover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("../assets/hover.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.square:focus::after,
+.square:active::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("../assets/focus-active.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 1;
+}
+
 
 .square img {
     display: block;
@@ -285,9 +324,10 @@ button:active {
     background-image: url("../assets/tile-3.png");
 }
 
-#reset-btn {
-    font-size: var(--mobile-font-clamp);
+.bottom-btns {
+    display: flex;
 }
+
 
 /* Animations */
 .bounce {
@@ -308,8 +348,17 @@ button:active {
     }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .bounce {
+        animation: none;
+    }
+}
 
 
 /* # End Screen # */
+#game-over-content h3 {
+    font-family: "Gaegu", sans-serif;
+}
+
 
 /* ## Footer ## */

@@ -133,10 +133,12 @@ class GameSquare {
 
 
 class Game {
-    constructor(devMode = false, cheatMode = false) {
-        this.elems = {}
+    constructor() {
+        this.elems = {};
         this._setUpElems();
         this._setUpEvents();
+
+        this._onStartScreenExit = () => { this._handleStartScreenExit(); };
 
         // Set up object where key is id of element and value is the associated GameSquare object
         this.gameSquares = {};
@@ -148,14 +150,20 @@ class Game {
         this.allSquaresSet = new Set();
         this.elems.squareElems.forEach(elem => this.allSquaresSet.add(elem.id));
 
-
+        // Game scores
         this.coins = 5;
         this.strikes = 0;
+
         // Calculate number of burnt breads for game over
         this.failStrikes = Math.ceil(Object.keys(this.gameSquares).length / 2);
         this.elems.strikesMax.innerHTML = this.failStrikes;
 
-        // TODO: game screen and tutorial
+        // Min and max times in ms for bread placement
+        this.minPlaceTime = 1000;
+        this.maxPlaceTime = 4000;
+
+        this.absoluteMinTime = 300;
+        this.decreaseTimeRatio = 0.99;
 
 
     }
@@ -163,20 +171,73 @@ class Game {
     _setUpElems() {
         this.elems.startScreen = document.getElementById("start-screen");
         this.elems.startBtn = document.getElementById("start-btn");
+        this.elems.tutorialBtn = document.getElementById("tutorial-btn");
+
+        this.elems.tutorialPopup = document.getElementById("tutorial-popup");
+        this.elems.tutorialCloseBtn = document.getElementById("close-btn");
+        this.elems.tutorialStartBtn = document.getElementById("tut-start-btn");
+
         this.elems.gameScreen = document.getElementById("game-screen");
         this.elems.squareElems = Array.from(document.querySelectorAll(".square"));
         this.elems.strikesOut = document.getElementById("strikes-output");
         this.elems.strikesMax = document.getElementById("strikes-max");
         this.elems.coinsOut = document.getElementById("coin-output");
+        this.elems.resetBtn = document.getElementById("reset-btn");
+        this.elems.quitBtnGame = document.getElementById("quit-btn-game");
+
+        this.elems.gameOverPopup = document.getElementById("game-over-popup");
+        this.elems.finalScoreOut = document.getElementById("final-score-out");
+        this.elems.finalStrikesOut = document.getElementById("final-strikes-out");
+        this.elems.finalStrikesMax = document.getElementById("final-strikes-max");
+        this.elems.playAgainBtn = document.getElementById("play-again-btn");
+        this.elems.quitBtnEnd = document.getElementById("quit-btn-end");
 
     }
 
     _setUpEvents() {
-        this.elems.startScreen.addEventListener('transitionend', () => { this._placeBreads(); }, { once: true });
-        this.elems.startBtn.addEventListener('click', () => { this.elems.startScreen.classList.toggle("hidden"); });
+        // Start screen events
+        this.elems.startBtn.addEventListener('click', () => {
+            this.elems.startScreen.addEventListener('transitionend', this._onStartScreenExit);
+            this.elems.startScreen.classList.toggle("hidden");
+        });
+
+        // Tutorial screen events
+        this.elems.tutorialBtn.addEventListener('click', () => { this.elems.tutorialPopup.classList.toggle("hidden"); });
+        this.elems.tutorialCloseBtn.addEventListener('click', () => { this.elems.tutorialPopup.classList.toggle("hidden"); });
+        this.elems.tutorialStartBtn.addEventListener('click', () => {
+            this.elems.startScreen.addEventListener('transitionend', this._onStartScreenExit);
+            this.elems.tutorialPopup.classList.toggle("hidden");
+            this.elems.startScreen.classList.toggle("hidden");
+        });
+
+        // Game screen events
         this.elems.squareElems.forEach(elem => elem.addEventListener('click', e => this._handleSquareClick(e)));
         this.elems.squareElems.forEach(elem => elem.addEventListener('burnt', e => this._handleBurnt()));
+        this.elems.resetBtn.addEventListener("click", () => {
+            this._reset();
+            this._placeBreads();
+        });
+        this.elems.quitBtnGame.addEventListener("click", () => { this._gameOver(); });
 
+        // Game over screen events
+        this.elems.playAgainBtn.addEventListener("click", () => {
+            this._reset();
+            this.elems.gameOverPopup.classList.toggle("hidden");
+            this._placeBreads();
+        });
+
+        this.elems.quitBtnEnd.addEventListener("click", () => {
+            this._reset();
+            this.elems.gameOverPopup.classList.toggle("hidden");
+            this.elems.startScreen.classList.toggle("hidden");
+        });
+
+    }
+
+    // Place breads and remove the event listener so it won't be called if you exit back to the start screen
+    _handleStartScreenExit() {
+        this._placeBreads();
+        this.elems.startScreen.removeEventListener("transitionend", this._onStartScreenExit);
     }
 
     // Handle what happens when a square is clicked
@@ -197,9 +258,10 @@ class Game {
         this.occupiedSquaresSet.delete(id);
         square.reset();
 
-        if (this.coins < 0) {
-            this._gameOver("bankrupt");
-            this.elems.coinsOut.innerHTML = 0;
+        // Game over if you run out of coins
+        if (this.coins <= 0) {
+            this.coins = 0;
+            this._gameOver();
             return;
         }
 
@@ -212,7 +274,7 @@ class Game {
         this.strikes++;
 
         if (this.strikes >= this.failStrikes) {
-            this._gameOver("fired");
+            this._gameOver();
         }
 
         this.elems.strikesOut.innerHTML = this.strikes;
@@ -220,49 +282,92 @@ class Game {
     }
 
     // At a random interval between min and max times, add a bread to a random square
-    _placeBreads(min_time = 1000, max_time = 4000) {
-        const randTime = Math.floor(Math.random() * (max_time - min_time + 1) + min_time);
-        // TODO: Decrease interval as time goes on? (handle 0 case)
-        this.timeout = setTimeout(() => this._placeBreads(min_time, max_time), randTime);
-
-        if (this.occupiedSquaresSet.size == Object.keys(this.gameSquares).length) {
+    _placeBreads() {
+        // Prevent timeouts overlapping
+        if (this.timeout) {
             return;
         }
 
-        const bread_names = Object.keys(breads);
-        const randSquare = this._randomSquare();
-        const randItem = bread_names[Math.floor(Math.random() * bread_names.length)];
+        const breadPlaceLoop = () => {
+            // If full, wait and try again
+            if (this.occupiedSquaresSet.size == Object.keys(this.gameSquares).length) {
+                this.timeout = setTimeout(breadPlaceLoop, this.minPlaceTime);
+                return;
+            }
 
-        this.gameSquares[randSquare].addItem(randItem);
-        this.occupiedSquaresSet.add(randSquare);
+            const randTime = Math.floor(Math.random() * (this.maxPlaceTime - this.minPlaceTime + 1) + this.minPlaceTime);
+            const bread_names = Object.keys(breads);
+            const randSquare = this._randomSquare();
+            const randItem = bread_names[Math.floor(Math.random() * bread_names.length)];
 
+            this.gameSquares[randSquare].addItem(randItem);
+            this.occupiedSquaresSet.add(randSquare);
+
+            // Reduce the time between loops while above min time
+            if (this.minPlaceTime > this.absoluteMinTime) {
+                this.minPlaceTime = this.minPlaceTime * this.decreaseTimeRatio;
+                this.maxPlaceTime = this.maxPlaceTime * this.decreaseTimeRatio;
+            }
+
+            this.timeout = setTimeout(breadPlaceLoop, randTime);
+
+        }
+
+        breadPlaceLoop();
     }
 
-    // Picks a random unoccupied square
+    // Return the id of a random unoccupied square
     _randomSquare() {
+        // Create an array of unoccupied square ids through the difference between the occupied set and whole set
         const unoccupiedArr = Array.from(this.allSquaresSet.difference(this.occupiedSquaresSet));
         return unoccupiedArr[Math.floor(Math.random() * unoccupiedArr.length)];
 
     }
 
-    _gameOver(type) {
-        console.log("Game over!", type);
-
+    // Handle game over
+    _gameOver() {
+        // Stop all state progressions
         for (let square in this.gameSquares) {
             this.gameSquares[square].stop();
         }
+
+        // Stop placing new breads
         clearTimeout(this.timeout);
+        this.timeout = null;
 
-        // TODO: Freeze interactions do game over screen.
+        // Display final scores
+        this.elems.finalScoreOut.innerHTML = this.coins;
+        this.elems.finalStrikesOut.innerHTML = this.strikes;
+        this.elems.finalStrikesMax.innerHTML = this.failStrikes;
+
+        this.elems.gameOverPopup.classList.toggle("hidden");
+
     }
 
+    // Resets all game states
     _reset() {
+        // Stop placing new breads if you haven't already
+        if (this.timeout != null) {
+            clearTimeout(this.timeout);
+            this.timeout = null;
+        }
 
+        // Reset game stats
+        this.coins = 5;
+        this.elems.coinsOut.innerHTML = this.coins;
+        this.strikes = 0;
+        this.elems.strikesOut.innerHTML = this.strikes;
+        this.occupiedSquaresSet = new Set();
+
+        this.minPlaceTime = 1000;
+        this.maxPlaceTime = 4000;
+
+        // Reset the state of all squares
+        for (let square in this.gameSquares) {
+            this.gameSquares[square].reset();
+        }
     }
 
-    _devmode() {
-        // TODO: skip title screen?
-    }
 }
 
 
