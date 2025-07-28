@@ -7,7 +7,7 @@
     --brown: #683319;
     --green: #A5A250;
     --dark-cream: #d6be97;
-    --mobile-font-clamp: clamp(1rem, 5vw, 2rem);
+    --font-clamp: clamp(0.5rem, 3vh, 2rem);
 
 }
 
@@ -27,13 +27,15 @@ h6 {
     color: var(--dark-brown);
 }
 
-h1 {
-    font-size: 3.5rem;
+@media (min-width: 40em) {
+    p {
+        font-size: 1.3rem;
+    }
 }
 
 /* Buttons */
 button {
-    font-size: var(--mobile-font-clamp);
+    font-size: var(--font-clamp);
     padding: 0.5rem 1rem;
     margin: 1rem;
     border-radius: 20%;
@@ -50,6 +52,10 @@ button {
     max-width: fit-content;
 
 
+}
+
+button:hover {
+    filter: drop-shadow(0px 5px 0px var(--brown))
 }
 
 button:focus,
@@ -113,11 +119,23 @@ button:active {
 .logo-img {
     width: 80%;
     max-width: 20rem;
+
     margin-top: 10%;
     filter: drop-shadow(0px 5px 1px var(--brown));
 }
 
-@media (min-width: 40em) {}
+@media (min-width: 40em) {
+    #content button {
+        font-size: clamp(0.5rem, 5vh, 2rem);
+    }
+
+    .logo-img {
+        margin-top: 5%;
+        width: auto;
+        max-height: 50vh;
+    }
+
+}
 
 
 /* # Tutorial # */
@@ -164,7 +182,7 @@ button:active {
 .popup-content h2 {
     margin: 0;
     margin-top: 1rem;
-    font-size: var(--mobile-font-clamp);
+    font-size: var(--font-clamp);
 }
 
 .popup-content p {
@@ -172,7 +190,7 @@ button:active {
 }
 
 #tutorial-content img {
-    max-width: 50%;
+    height: 10vh;
 }
 
 #close-btn {
@@ -189,12 +207,19 @@ button:active {
 }
 
 #close-btn:focus,
-#close-btn:active {
+#close-btn:active,
+#close-btn:hover {
     filter: none;
 }
 
+#close-btn:hover .fill-path {
+    fill: var(--green);
+}
+
 #close-btn:focus .fill-path,
-#close-btn:active .fill-path {
+#close-btn:active .fill-path,
+#close-btn:focus .outline-path,
+#close-btn:active .outline-path {
     fill: var(--green);
 }
 
@@ -212,7 +237,7 @@ button:active {
     flex-direction: column;
     padding: 1rem;
     align-items: center;
-    height: 100%;
+    height: 100vh;
     background-image: url(../assets/bg-image.svg);
     background-size: 50%;
     background-repeat: repeat-x;
@@ -232,8 +257,9 @@ button:active {
 
 .game-board {
     display: grid;
-    width: 90%;
-    max-width: 400px;
+    width: auto;
+    height: 50%;
+    max-height: 400px;
     gap: 3%;
     aspect-ratio: 1 / 1;
     grid-template-columns: repeat(3, 1fr);
@@ -250,13 +276,13 @@ button:active {
 .score-container {
     display: flex;
     justify-content: space-between;
-    font-size: var(--mobile-font-clamp);
+    font-size: var(--font-clamp);
     width: 90%;
     max-width: 400px;
 }
 
 .coin-img {
-    max-height: var(--mobile-font-clamp);
+    max-height: var(--font-clamp);
 }
 
 .score {
@@ -329,6 +355,12 @@ button:active {
 }
 
 
+@media (min-width: 40em) {
+    .score-container {
+        width: 30%;
+    }
+}
+
 /* Animations */
 .bounce {
     animation: bounce .5s ease;
@@ -360,5 +392,19 @@ button:active {
     font-family: "Gaegu", sans-serif;
 }
 
+@media (min-width: 40em) {
+    .final-score-container {
+        font-size: var(--font-clamp);
+        margin: 1rem 0;
+    }
+
+    #game-over-content {
+        padding: 2rem;
+    }
+
+    #game-over-content h3 {
+        margin: 0;
+    }
+}
 
 /* ## Footer ## */

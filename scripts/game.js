@@ -98,6 +98,10 @@ class GameSquare {
         this.type = "";
         this._setImg();
 
+        const imgCollection = this.elem.getElementsByTagName('img');
+        const img = imgCollection[0];
+        img.classList.remove("bounce");
+
         this.stop()
 
     }
