@@ -89,7 +89,7 @@ button:active {
     pointer-events: none;
 
     border: 2rem solid transparent;
-    border-image-source: url(../assets/border-filled-3.png);
+    border-image-source: url(../assets/border-filled.png);
     border-image-slice: 90;
     border-image-repeat: round;
 
