@@ -180,7 +180,7 @@ class Game {
         this.elems.tutorialBtn = document.getElementById("tutorial-btn");
 
         this.elems.tutorialPopup = document.getElementById("tutorial-popup");
-        this.elems.tutorialCloseBtn = document.getElementById("close-btn");
+        this.elems.tutorialCloseBtn = document.getElementById("close-btn-tutorial");
         this.elems.tutorialStartBtn = document.getElementById("tut-start-btn");
 
         this.elems.gameScreen = document.getElementById("game-screen");

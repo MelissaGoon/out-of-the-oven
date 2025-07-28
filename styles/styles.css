@@ -124,6 +124,45 @@ button:active {
     filter: drop-shadow(0px 5px 1px var(--brown));
 }
 
+/* Settings */
+#settings-btn {
+    position: absolute;
+    z-index: 999;
+    top: 0;
+    right: 0;
+    border: none;
+    background-color: transparent;
+}
+
+#settings-btn svg {
+    height: 2rem;
+    width: auto;
+}
+
+#sound-settings {
+    position: absolute;
+    color: var(--dark-brown);
+    top: 0;
+    right: 0;
+    margin: 0.5rem;
+    background-color: var(--cream);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    border-width: 0.5rem;
+}
+
+.volume-container {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.volume-container input {
+    width: 60%;
+}
+
+
 @media (min-width: 40em) {
     #content button {
         font-size: clamp(0.5rem, 5vh, 2rem);
@@ -193,7 +232,7 @@ button:active {
     height: 10vh;
 }
 
-#close-btn {
+.close-btn {
     border: none;
     background-color: transparent;
     height: 2rem;
@@ -206,20 +245,20 @@ button:active {
 
 }
 
-#close-btn:focus,
-#close-btn:active,
-#close-btn:hover {
+.close-btn:focus,
+.close-btn:active,
+.close-btn:hover {
     filter: none;
 }
 
-#close-btn:hover .fill-path {
+.close-btn:hover .fill-path {
     fill: var(--green);
 }
 
-#close-btn:focus .fill-path,
-#close-btn:active .fill-path,
-#close-btn:focus .outline-path,
-#close-btn:active .outline-path {
+.close-btn:focus .fill-path,
+.close-btn:active .fill-path,
+.close-btn:focus .outline-path,
+.close-btn:active .outline-path {
     fill: var(--green);
 }
 

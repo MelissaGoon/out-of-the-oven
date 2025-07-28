@@ -30,11 +30,38 @@
                     <button id="tutorial-btn">Tutorial</button>
                 </div>
 
-                <!-- <button>
-                    <img src="" alt="">
-                </button> -->
-
                 <p>&copy; Melissa Goon 2025</p>
+
+                <!-- Settings -->
+                <button id="settings-btn">
+                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <title>Settings button</title>
+                        <path
+                            d="M72.5 2.5V12.5H77.5V17.5H82.5V12.5H97.5V17.5H102.5V22.5H107.5V37.5H102.5V42.5H107.5V47.5H117.5V72.5H107.5V77.5H102.5V82.5H107.5V97.5H102.5V102.5H97.5V107.5H82.5V102.5H77.5V107.5H72.5V117.5H47.5V107.5H42.5V102.5H37.5V107.5H22.5V102.5H17.5V97.5H12.5V82.5H17.5V77.5H12.5V72.5H2.5V47.5H12.5V42.5H17.5V37.5H12.5V22.5H17.5V17.5H22.5V12.5H37.5V17.5H42.5V12.5H47.5V2.5H72.5ZM52.5 52.5H47.5V67.5H52.5V72.5H67.5V67.5H72.5V52.5H67.5V47.5H52.5V52.5Z"
+                            fill="#683319" stroke="#FFFCF7" stroke-width="5" />
+                    </svg>
+                </button>
+
+                <div id="sound-settings" class="popup-content">
+                    <button id="close-btn-settings" class="close-btn">
+                        <svg class="close-icon" width="110" height="110" viewBox="0 0 110 110" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <title>Close the sound settings</title>
+                            <path class="fill-path "
+                                d="M80 85H75V80H70V75H65V70H60V65H50V70H45V75H40V80H35V85H30V80H25V75H30V70H35V65H40V60H45V50H40V45H35V40H30V35H25V30H30V25H35V30H40V35H45V40H50V45H60V40H65V35H70V30H75V25H80V30H85V35H80V40H75V45H70V50H65V60H70V65H75V70H80V75H85V80H80V85Z"
+                                fill="#FEECCF" />
+                            <path class="outline-path"
+                                d="M75 85H80V80H85V75H80V70H75V65H70V60H65V50H70V45H75V40H80V35H85V30H80V25H75V30H70V35H65V40H60V45H50V40H45V35H40V30H35V25H30V30H25V35H30V40H35V45H40V50H45V60H40V65H35V70H30V75H25V80H30V85H35V80H40V75H45V70H50V65H60V70H65V75H70V80H75M85 95H70V90H65V85H60V80H50V85H45V90H40V95H25V90H20V85H15V70H20V65H25V60H30V50H25V45H20V40H15V25H20V20H25V15H40V20H45V25H50V30H60V25H65V20H70V15H85V20H90V25H95V40H90V45H85V50H80V60H85V65H90V70H95V85H90V90H85V95Z"
+                                fill="#683319" />
+                        </svg>
+                    </button>
+
+                    <div class="volume-container">
+                        <label for="music-volume">Music Volume</label>
+                        <input type="range" id="music-volume" name="music-volume" min="0" max="100" />
+                    </div>
+
+                </div>
             </section>
 
         </div>
@@ -42,8 +69,7 @@
         <!-- Tutorial Popup -->
         <div class="popup-bg hidden" id="tutorial-popup">
             <section id="tutorial-content" class="popup-content">
-                <button id="close-btn" class="close-btn">
-
+                <button id="close-btn-tutorial" class="close-btn">
                     <svg class="close-icon" width="110" height="110" viewBox="0 0 110 110" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <title>Close The Tutorial</title>
@@ -54,7 +80,6 @@
                             d="M75 85H80V80H85V75H80V70H75V65H70V60H65V50H70V45H75V40H80V35H85V30H80V25H75V30H70V35H65V40H60V45H50V40H45V35H40V30H35V25H30V30H25V35H30V40H35V45H40V50H45V60H40V65H35V70H30V75H25V80H30V85H35V80H40V75H45V70H50V65H60V70H65V75H70V80H75M85 95H70V90H65V85H60V80H50V85H45V90H40V95H25V90H20V85H15V70H20V65H25V60H30V50H25V45H20V40H15V25H20V20H25V15H40V20H45V25H50V30H60V25H65V20H70V15H85V20H90V25H95V40H90V45H85V50H80V60H85V65H90V70H95V85H90V90H85V95Z"
                             fill="#683319" />
                     </svg>
-
 
                 </button>
 
