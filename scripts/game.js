@@ -225,6 +225,7 @@ class Game {
         this.elems.playAgainBtn.addEventListener("click", () => {
             this._reset();
             this.elems.gameOverPopup.classList.toggle("hidden");
+            this.sounds.playMusic();
             this._placeBreads();
         });
         this.elems.quitBtnEnd.addEventListener("click", () => {
@@ -353,6 +354,7 @@ class Game {
 
         this.elems.gameOverPopup.classList.toggle("hidden");
         this.sounds.stopMusic();
+        this.sounds.gameOverSound()
 
     }
 
@@ -388,6 +390,7 @@ class Sounds {
         this.coins = document.getElementById("coin-sfx");
         this.breadBurnt = document.getElementById("burnt-sfx");
         this.music = document.getElementById("music");
+        this.gameOver = document.getElementById("game-over-sfx");
 
     }
 
@@ -405,6 +408,10 @@ class Sounds {
 
     burntSound() {
         this.breadBurnt.play();
+    }
+
+    gameOverSound() {
+        this.gameOver.play();
     }
 
     // Adapted from match-wars.start
@@ -425,7 +432,7 @@ class Sounds {
 
 
     // Adapted from match-wars.start
-    _fadeOutTrack(track, fadeTime = 1000) {
+    _fadeOutTrack(track, fadeTime = 500) {
         let volume = track.volume;
         const step = volume / (fadeTime / 50);
         const interval = setInterval(() => {
