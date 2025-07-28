@@ -134,6 +134,8 @@ class GameSquare {
 
 class Game {
     constructor() {
+        this.sounds = new Sounds();
+
         this.elems = {};
         this._setUpElems();
         this._setUpEvents();
@@ -163,7 +165,7 @@ class Game {
         this.maxPlaceTime = 4000;
 
         this.absoluteMinTime = 300;
-        this.decreaseTimeRatio = 0.99;
+        this.decreaseTimeStep = 0.99;
 
 
     }
@@ -225,7 +227,6 @@ class Game {
             this.elems.gameOverPopup.classList.toggle("hidden");
             this._placeBreads();
         });
-
         this.elems.quitBtnEnd.addEventListener("click", () => {
             this._reset();
             this.elems.gameOverPopup.classList.toggle("hidden");
@@ -237,6 +238,7 @@ class Game {
     // Place breads and remove the event listener so it won't be called if you exit back to the start screen
     _handleStartScreenExit() {
         this._placeBreads();
+        this.sounds.playMusic();
         this.elems.startScreen.removeEventListener("transitionend", this._onStartScreenExit);
     }
 
@@ -254,7 +256,15 @@ class Game {
         const type = square.getType();
 
         // Use breads object to find the value of the bread clicked
-        this.coins += breads[type][state].value;
+        const value = breads[type][state].value;
+        this.coins += value;
+
+        // Play coin sound if coins gained
+        if (value > 0) {
+            this.sounds.coinSound();
+        }
+
+        // Reset square to empty
         this.occupiedSquaresSet.delete(id);
         square.reset();
 
@@ -272,6 +282,7 @@ class Game {
     // Handle when the burnt event occurs on a game square
     _handleBurnt() {
         this.strikes++;
+        this.sounds.burntSound();
 
         if (this.strikes >= this.failStrikes) {
             this._gameOver();
@@ -305,8 +316,8 @@ class Game {
 
             // Reduce the time between loops while above min time
             if (this.minPlaceTime > this.absoluteMinTime) {
-                this.minPlaceTime = this.minPlaceTime * this.decreaseTimeRatio;
-                this.maxPlaceTime = this.maxPlaceTime * this.decreaseTimeRatio;
+                this.minPlaceTime = this.minPlaceTime * this.decreaseTimeStep;
+                this.maxPlaceTime = this.maxPlaceTime * this.decreaseTimeStep;
             }
 
             this.timeout = setTimeout(breadPlaceLoop, randTime);
@@ -341,6 +352,7 @@ class Game {
         this.elems.finalStrikesMax.innerHTML = this.failStrikes;
 
         this.elems.gameOverPopup.classList.toggle("hidden");
+        this.sounds.stopMusic();
 
     }
 
@@ -372,6 +384,60 @@ class Game {
 
 
 class Sounds {
+    constructor() {
+        this.coins = document.getElementById("coin-sfx");
+        this.breadBurnt = document.getElementById("burnt-sfx");
+        this.music = document.getElementById("music");
+
+    }
+
+    playMusic() {
+        this._fadeInTrack(this.music);
+    }
+
+    stopMusic() {
+        this._fadeOutTrack(this.music);
+    }
+
+    coinSound() {
+        this.coins.play();
+    }
+
+    burntSound() {
+        this.breadBurnt.play();
+    }
+
+    // Adapted from match-wars.start
+    _fadeInTrack(track, fadeTime = 500) {
+        track.volume = 0.0;
+        track.loop = true;
+        track.currentTime = 0;
+        track.play();
+
+        let volume = 0.0;
+        const step = 1 / (fadeTime / 50);
+        const interval = setInterval(() => {
+            volume = Math.min(volume + step, 1);
+            track.volume = volume;
+            if (volume === 1) clearInterval(interval);
+        }, 50);
+    }
+
+
+    // Adapted from match-wars.start
+    _fadeOutTrack(track, fadeTime = 1000) {
+        let volume = track.volume;
+        const step = volume / (fadeTime / 50);
+        const interval = setInterval(() => {
+            volume = Math.max(volume - step, 0);
+            track.volume = volume;
+            if (volume === 0) {
+                track.pause();
+                clearInterval(interval);
+            }
+        }, 50);
+    }
+
 
 }
 
